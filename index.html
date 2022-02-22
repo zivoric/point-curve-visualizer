@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Funky Line Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script type="text/javascript" src="math.js"></script>
+  <script type="text/javascript" src="canvas.js" async></script>
+</head>
+<body>
+  <div id="control-panel">
+    <div id="point-list">
+    </div>
+    <div id="options">
+      <div id="preferences">
+        <span><input type="checkbox" id="points" name="points" checked><label for="points">Show Points</label></span>
+        <span><input type="checkbox" id="line" name="line" checked><label for="line">Show Line</label></span>
+        <span><input type="checkbox" id="derivative" name="derivative"><label for="derivative">Draw Derivative</label></span></div>
+      <button name="add">+</button>
+    </div>
+  </div>
+  <div id="equation">
+    <div>f(x)</div>
+    <div>none</div>
+  </div>
+  <canvas id="graph"></canvas>
+  <script type="text/javascript" src="control.js"></script>
+</body>
+</html>

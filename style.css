@@ -1,0 +1,122 @@
+body {
+    font-family: "Open Sans", Helvetica, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    overflow: hidden;
+}
+#control-panel, #equation {
+    position: absolute;
+    background-color: rgba(180, 180, 180, 0.411);
+    border: 1px solid rgba(150, 150, 150, 0.411);
+}
+
+#control-panel {
+    padding: 12px;
+    top: 0;
+    right: 0;
+}
+#control-panel *, #equation * {
+    user-select: none;
+}
+#equation {
+    font-size: 20px;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    max-height: 200px;
+    max-width: 400px;
+    align-items: stretch;
+    align-content: center;
+}
+#equation div {
+    padding: 12px;
+}
+
+#equation div:first-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-style: italic;
+    border-right: 1px solid rgba(150, 150, 150, 0.411);
+}
+#equation div:last-child {
+    overflow-y: auto;
+    word-break: break-all;
+    max-height: 200px;
+}
+
+
+#point-list {
+    display: flex;
+    flex-direction: column;
+}
+
+#preferences {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+#options label {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+#options button {
+    display: block;
+    float: right;
+    width: 33px;
+    height: 33px;
+}
+
+.point-element, #options {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.point-element {
+    align-content: center;
+    padding-bottom:12px;
+}
+
+.point-element span {
+    display: inline-block;
+    font-size: 24px;
+    height: 33px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.point-input, button {
+    display: inline-block;
+    padding: 6px;
+    border: 1px solid #b8b8b8;
+    background-color: #f0f0f0;
+}
+.point-element button {
+    height: 33px;
+    width: 33px;
+}
+
+.point-input {
+    background-color: white;
+    height: 19px;
+    min-width: 40px;
+    max-width: 200px;
+}
+
+button:hover {
+    border-color: #6dabe6;
+    background-color: #c5e3f5;
+}
+button:active {
+    border-color: #6096c9;
+    background-color: rgb(139, 200, 238);
+}
+
+.point-input:focus, button:focus {
+    border-color: #3d9df7;
+    box-shadow: 0px 0px 4px #3d9df7;
+    outline: none;
+}
