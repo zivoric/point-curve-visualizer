@@ -1,7 +1,11 @@
 const canvas = document.getElementById("graph");
 const c = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const ratio = window.devicePixelRatio;
+canvas.width = window.innerWidth*ratio;
+canvas.height = window.innerHeight*ratio;
+canvas.style.width = window.innerWidth + "px";
+canvas.style.height = window.innerHeight + "px";
+
 let initialWidth = 21;
 let scale = canvas.width/initialWidth;
 let cornerX = -initialWidth/2;
@@ -29,9 +33,9 @@ let mouse = {
 };
 
 canvas.addEventListener('mousemove', function(e) {
-    mouse.x = e.x;
-    mouse.y = e.y;
-    let mousePoint = getPoint([e.x, e.y]);
+    mouse.x = e.x*ratio;
+    mouse.y = e.y*ratio;
+    let mousePoint = getPoint([e.x*ratio, e.y*ratio]);
     mouse.xPoint = mousePoint[0];
     mouse.yPoint = mousePoint[1];
     if (mouse.pressed) {
@@ -136,7 +140,7 @@ function drawGeoFunctionOld(values) {
 
 function drawGeoFunction(values) {
     let dx = 1;
-    let x = (cornerX-parseInt(cornerX))*scale - dx;
+    let x = (Math.floor(cornerX)-cornerX)*scale - dx;
     c.beginPath();
     c.lineWidth = 3;
     c.moveTo(x, getYCoord(geoValue(getXPoint(x), values)));
@@ -151,7 +155,7 @@ function drawGeoFunction(values) {
 
 function drawDerivative(values) {
     let dx = 1;
-    let x = (cornerX-parseInt(cornerX))*scale - dx;
+    let x = (Math.floor(cornerX)-cornerX)*scale - dx;
     let y = getYCoord(geoValue(getXPoint(x), values));
     c.beginPath();
     c.lineWidth = 3;
@@ -301,8 +305,10 @@ function updateInformation() {
 }
 
 function update() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth*ratio;
+    canvas.height = window.innerHeight*ratio;
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
     c.clearRect(0, 0, canvas.width, canvas.height);
     drawAxes(options.showGridlines, options.showNumbers);
     if (options.drawDerivative) {
