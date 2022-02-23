@@ -27,14 +27,18 @@ let options = {
 let mouse = {
     x: getXCoord(0),
     y: getYCoord(0),
+    touchX: getXCoord(0),
+    touchY: getYCoord(0),
     xPoint: 0,
     yPoint: 0,
     pressed: false
 };
 
 canvas.addEventListener('mousemove', function(e) {
-    mouse.x = e.x*ratio;
-    mouse.y = e.y*ratio;
+    mouse.touchX = e.clientX;
+    mouse.touchY = e.clientY;
+    mouse.x = e.clientX*ratio;
+    mouse.y = e.clientY*ratio;
     let mousePoint = getPoint([e.x*ratio, e.y*ratio]);
     mouse.xPoint = mousePoint[0];
     mouse.yPoint = mousePoint[1];
@@ -45,14 +49,43 @@ canvas.addEventListener('mousemove', function(e) {
     }
 });
 canvas.addEventListener('mousedown', function(e) {
+    mouse.touchX = e.clientX;
+    mouse.touchY = e.clientY;
     mouse.pressed = true;
 });
 canvas.addEventListener('mouseup', function(e) {
+    mouse.touchX = e.clientX;
+    mouse.touchY = e.clientY;
     mouse.pressed = false;
 });
 
 canvas.addEventListener('wheel', function(e) {
     linearTransitionScale(7/6, -e.deltaY/100, 150);
+});
+
+canvas.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    if (e.touches.length == 1) {
+        canvas.dispatchEvent(new MouseEvent('mousedown', {
+            clientX: e.touches[0].clientX,
+            clientY: e.touches[0].clientY
+        }));
+    }
+});
+canvas.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    canvas.dispatchEvent(new MouseEvent('mouseup'));
+});
+canvas.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    if (e.touches.length == 1) {
+        canvas.dispatchEvent(new MouseEvent('mousemove', {
+            clientX: e.touches[0].clientX,
+            clientY: e.touches[0].clientY,
+            movementX: e.touches[0].clientX - mouse.touchX,
+            movementY: e.touches[0].clientY - mouse.touchY
+        }));
+    }
 });
 
 function linearTransitionScale(base, power, totalTime) {
