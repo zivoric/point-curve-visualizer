@@ -34,19 +34,24 @@ let mouse = {
     pressed: false
 };
 
-canvas.addEventListener('mousemove', function(e) {
-    mouse.touchX = e.clientX;
-    mouse.touchY = e.clientY;
-    mouse.x = e.clientX*ratio;
-    mouse.y = e.clientY*ratio;
-    let mousePoint = getPoint([e.x*ratio, e.y*ratio]);
-    mouse.xPoint = mousePoint[0];
-    mouse.yPoint = mousePoint[1];
+let mousemove = 0;
+function onMouseMove(x, y, dx, dy) {
+    mouse.touchX = x;
+    mouse.touchY = y;
+    mouse.x = x*ratio;
+    mouse.y = y*ratio;
+    mouse.xPoint = getXPoint(mouse.x);
+    mouse.yPoint = getYPoint(mouse.y);
     if (mouse.pressed) {
-        cornerX -= e.movementX/scale;
-        cornerY += e.movementY/scale;
+        console.log(x, y, dx, dy);
+        mousemove += dy;
+        cornerX -= dx/scale;
+        cornerY += dy/scale;
         update();
     }
+}
+canvas.addEventListener('mousemove', function(e) {
+    onMouseMove(e.clientX, e.clientY, e.movementX, e.movementY);
 });
 canvas.addEventListener('mousedown', function(e) {
     mouse.touchX = e.clientX;
@@ -76,15 +81,12 @@ canvas.addEventListener('touchend', function(e) {
     e.preventDefault();
     canvas.dispatchEvent(new MouseEvent('mouseup'));
 });
+
+let touchmove = 0;
 canvas.addEventListener('touchmove', function(e) {
     e.preventDefault();
     if (e.touches.length == 1) {
-        canvas.dispatchEvent(new MouseEvent('mousemove', {
-            clientX: e.touches[0].clientX,
-            clientY: e.touches[0].clientY,
-            movementX: e.touches[0].clientX - mouse.touchX,
-            movementY: e.touches[0].clientY - mouse.touchY
-        }));
+       onMouseMove(e.touches[0].clientX, e.touches[0].clientY, (e.touches[0].clientX - mouse.touchX)*ratio, (e.touches[0].clientY - mouse.touchY)*ratio);
     }
 });
 
