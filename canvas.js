@@ -43,7 +43,6 @@ function onMouseMove(x, y, dx, dy) {
     mouse.xPoint = getXPoint(mouse.x);
     mouse.yPoint = getYPoint(mouse.y);
     if (mouse.pressed) {
-        console.log(x, y, dx, dy);
         mousemove += dy;
         cornerX -= dx/scale;
         cornerY += dy/scale;
