@@ -121,7 +121,6 @@ function instantScale(multiplier) {
 }
 
 function linearTransitionScale(base, power, totalTime) {
-    
     linearTransitionLoop(base, power, totalTime, performance.now(), performance.now());
 }
 function linearTransitionLoop(base, power, totalTime, lastTime, startTime) {
@@ -265,7 +264,7 @@ const graphTolerance = 8;
 
 function drawAxes(gridlines, numbers) {
     let origin = getCoords([0,0]);
-    let tenPower = Math.log10(160*ratio/scale);
+    let tenPower = Math.log10(200*ratio/scale);
     let tenScale = Math.pow(10, Math.ceil(tenPower));
     let divisor = Math.pow(10, Math.ceil(tenPower)-tenPower);
     let roundingPlace = 1 - Math.ceil(tenPower);
