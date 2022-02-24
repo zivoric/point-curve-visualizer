@@ -24,26 +24,25 @@ let options = {
     points: [],
     values: []
 };
-let mouse = {
+let controls = {
     x: getXCoord(0),
     y: getYCoord(0),
     touchX: getXCoord(0),
     touchY: getYCoord(0),
+    touchHypot: undefined,
     xPoint: 0,
     yPoint: 0,
     pressed: false
 };
 
-let mousemove = 0;
-function onMouseMove(x, y, dx, dy) {
-    mouse.touchX = x;
-    mouse.touchY = y;
-    mouse.x = x*ratio;
-    mouse.y = y*ratio;
-    mouse.xPoint = getXPoint(mouse.x);
-    mouse.yPoint = getYPoint(mouse.y);
-    if (mouse.pressed) {
-        mousemove += dy;
+function onMouseMove(x, y, dx = 0, dy = 0, pressed = controls.pressed) {
+    controls.touchX = x;
+    controls.touchY = y;
+    controls.x = x*ratio;
+    controls.y = y*ratio;
+    controls.xPoint = getXPoint(controls.x);
+    controls.yPoint = getYPoint(controls.y);
+    if (pressed) {
         cornerX -= dx/scale;
         cornerY += dy/scale;
         update();
@@ -53,14 +52,12 @@ canvas.addEventListener('mousemove', function(e) {
     onMouseMove(e.clientX, e.clientY, e.movementX, e.movementY);
 });
 canvas.addEventListener('mousedown', function(e) {
-    mouse.touchX = e.clientX;
-    mouse.touchY = e.clientY;
-    mouse.pressed = true;
+    onMouseMove(e.clientX, e.clientY);
+    controls.pressed = true;
 });
 canvas.addEventListener('mouseup', function(e) {
-    mouse.touchX = e.clientX;
-    mouse.touchY = e.clientY;
-    mouse.pressed = false;
+    controls.pressed = false;
+    onMouseMove(e.clientX, e.clientY);
 });
 
 canvas.addEventListener('wheel', function(e) {
@@ -74,28 +71,62 @@ canvas.addEventListener('touchstart', function(e) {
             clientX: e.touches[0].clientX,
             clientY: e.touches[0].clientY
         }));
+    } else {
+        if (e.touches.length != 0) {
+            onMouseMove((e.touches[0].clientX+e.touches[1].clientX)/2, (e.touches[0].clientY+e.touches[1].clientY)/2, 0, 0, false);
+            controls.touchHypot = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+        }
     }
 });
 canvas.addEventListener('touchend', function(e) {
     e.preventDefault();
-    canvas.dispatchEvent(new MouseEvent('mouseup'));
+    if (e.touches.length == 1) {
+        canvas.dispatchEvent(new MouseEvent('mousedown', {
+            clientX: e.touches[0].clientX,
+            clientY: e.touches[0].clientY
+        }));
+    } else if (e.touches.length == 0) {
+        canvas.dispatchEvent(new MouseEvent('mouseup'));
+    } else {
+        onMouseMove((e.touches[0].clientX+e.touches[1].clientX)/2, (e.touches[0].clientY+e.touches[1].clientY)/2, 0, 0, false);
+        controls.touchHypot = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    }
 });
 
-let touchmove = 0;
 canvas.addEventListener('touchmove', function(e) {
     e.preventDefault();
     if (e.touches.length == 1) {
-       onMouseMove(e.touches[0].clientX, e.touches[0].clientY, (e.touches[0].clientX - mouse.touchX)*ratio, (e.touches[0].clientY - mouse.touchY)*ratio);
+       onMouseMove(e.touches[0].clientX, e.touches[0].clientY, (e.touches[0].clientX - controls.touchX)*ratio, (e.touches[0].clientY - controls.touchY)*ratio, controls.pressed);
+    } else if (e.touches.length == 2) {
+        let x1 = e.touches[0].clientX;
+        let y1 = e.touches[0].clientY;
+        let x2 = e.touches[1].clientX;
+        let y2 = e.touches[1].clientY;
+        let newX = (x1+x2)/2;
+        let newY = (y1+y2)/2;
+        let hypot = Math.hypot(x1-x2, y1-y2);
+        onMouseMove(newX, newY, (newX - controls.touchX)*ratio, (newY - controls.touchY)*ratio); 
+        instantScale(hypot/controls.touchHypot);
+        controls.touchHypot = hypot;
     }
 });
+
+function instantScale(multiplier) {
+    let pointDistX = controls.xPoint - cornerX;
+    let pointDistY = controls.yPoint - cornerY;
+    scale *= multiplier;
+    cornerX += pointDistX*(1-1/multiplier);
+    cornerY += pointDistY*(1-1/multiplier);
+    update();
+}
 
 function linearTransitionScale(base, power, totalTime) {
     
     linearTransitionLoop(base, power, totalTime, performance.now(), performance.now());
 }
 function linearTransitionLoop(base, power, totalTime, lastTime, startTime) {
-    let pointDistX = mouse.xPoint - cornerX;
-    let pointDistY = mouse.yPoint - cornerY;
+    let pointDistX = controls.xPoint - cornerX;
+    let pointDistY = controls.yPoint - cornerY;
     if (lastTime - startTime >= totalTime) {
         scale *= Math.pow(base, -power*(lastTime - startTime - totalTime)/totalTime);
         cornerX += pointDistX*(1-Math.pow(base, power*(lastTime - startTime - totalTime)/totalTime));
@@ -139,7 +170,7 @@ function drawPoints(points) {
         const coords = getCoords(point);
         c.beginPath();
         c.moveTo(coords[0],coords[1]);
-        c.arc(coords[0], coords[1], 5, 0, 2*Math.PI);
+        c.arc(coords[0], coords[1], 5*ratio, 0, 2*Math.PI);
         c.fillStyle = "rgba(60, 60, 60, 0.8)";
         c.fill();
         c.closePath();
@@ -176,7 +207,7 @@ function drawGeoFunction(values) {
     let dx = 1;
     let x = (Math.floor(cornerX)-cornerX)*scale - dx;
     c.beginPath();
-    c.lineWidth = 3;
+    c.lineWidth = 3*ratio;
     c.moveTo(x, getYCoord(geoValue(getXPoint(x), values)));
     while (x < canvas.width) {
         x += dx;
@@ -192,7 +223,7 @@ function drawDerivative(values) {
     let x = (Math.floor(cornerX)-cornerX)*scale - dx;
     let y = getYCoord(geoValue(getXPoint(x), values));
     c.beginPath();
-    c.lineWidth = 3;
+    c.lineWidth = 3*ratio;
     c.moveTo(x, y);
     while (x < canvas.width) {
         x += dx;
@@ -218,7 +249,7 @@ function drawFromPoints(points) {
     drawGeoFunction(simpleSolveMatrix(simpleGaussElim(functionMatrix(points))));
 }
 
-const textFont = '12px "Open Sans", Arial, sans-serif';
+const textFont = 12*ratio + 'px "Open Sans", Arial, sans-serif';
 
 function roundByTens(num, roundingPlace, roundingFactor) {
     let coord = num;
@@ -234,7 +265,7 @@ const graphTolerance = 8;
 
 function drawAxes(gridlines, numbers) {
     let origin = getCoords([0,0]);
-    let tenPower = Math.log10(160/scale);
+    let tenPower = Math.log10(160*ratio/scale);
     let tenScale = Math.pow(10, Math.ceil(tenPower));
     let divisor = Math.pow(10, Math.ceil(tenPower)-tenPower);
     let roundingPlace = 1 - Math.ceil(tenPower);
@@ -255,10 +286,10 @@ function drawAxes(gridlines, numbers) {
             let coord = roundByTens(getXPoint(x), roundingPlace+smallFrequency-1, roundingFactor/smallFrequency);
             c.beginPath();
             if (Math.abs(parseFloat((10/tenScale*coord).toFixed(graphTolerance))%(10/roundedDivisor)) == 0) {
-                c.lineWidth = 1;
+                c.lineWidth = 1*ratio;
                 c.strokeStyle = "#aaa";
             } else {
-                c.lineWidth = 0.5;  
+                c.lineWidth = 0.5*ratio;  
                 c.strokeStyle = "#ddd";
             }
             c.moveTo(x, 0);
@@ -272,10 +303,10 @@ function drawAxes(gridlines, numbers) {
             let coord = roundByTens(getYPoint(y), roundingPlace+smallFrequency-1, roundingFactor/smallFrequency);
             c.beginPath();
             if (Math.abs(parseFloat((10/tenScale*coord).toFixed(graphTolerance))%(10/roundedDivisor)) == 0) {
-                c.lineWidth = 1;
+                c.lineWidth = 1*ratio;
                 c.strokeStyle = "#aaa";
             } else {
-                c.lineWidth = 0.5;  
+                c.lineWidth = 0.5*ratio;  
                 c.strokeStyle = "#ddd";
             }
             c.moveTo(0,y);
@@ -290,7 +321,7 @@ function drawAxes(gridlines, numbers) {
     c.lineTo(origin[0], canvas.height);
     c.moveTo(0,origin[1]);
     c.lineTo(canvas.width,origin[1]);
-    c.lineWidth = 2;
+    c.lineWidth = 2*ratio;
     c.strokeStyle = "#777";
     c.stroke();
     c.closePath();
