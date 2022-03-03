@@ -1,8 +1,8 @@
 const pointList = $("#point-list");
-const pointElement = "<div class=\"point-element\"><span>(</span><div class=\"point-input\" name=\"x\" contenteditable></div><span>,</span><div class=\"point-input\" name=\"y\" contenteditable></div><span>)</span><button class=\"remove\">-</button></div>";
+const pointElement = "<div class=\"point-element\"><button name=\"remove\">-</button><span>(</span><div class=\"point-input\" name=\"x\" contenteditable></div><span>,</span><div class=\"point-input\" name=\"y\" contenteditable></div><span>)</span></div>";
 pointList.append(pointElement);
 
-$(document).on('click','.point-element button.remove',function() {
+$(document).on('click','.point-element button[name="remove"]',function() {
     if ($('#point-list .point-element').length > 1) {
         $(this).parent().remove();
         $(document).trigger("updateList");
@@ -18,7 +18,7 @@ $(document).on('input change updateList', function() {
             points.push([x,y]);
         }
     });
-    options.points = points;
+    lcOptions.points = points;
     updateInformation();
 });
 
@@ -63,13 +63,16 @@ $('#options button[name="add"]').on("click", function() {
 });
 
 $('#options #points').on("change", function() {
-    options.showPoints = this.checked;
+    lcOptions.showPoints = this.checked;
 });
 $('#options #line').on("change", function() {
-    options.showLine = this.checked;
+    lcOptions.showLine = this.checked;
 });
 $('#options #derivative').on("change", function() {
-    options.drawDerivative = this.checked;
+    lcOptions.drawDerivative = this.checked;
+});
+$('#options #equationToggle').on("change", function() {
+    $("#equation").css("display", this.checked ? "flex" : "none");
 });
 
 //let numberRegex = /[+-]?([0-9]*[.])?[0-9]*/s;

@@ -16,10 +16,13 @@ window.addEventListener('resize', function() {
 });
 
 let options = {
+    showGridlines: true,
+    showNumbers: true
+}
+
+let lcOptions = {
     showPoints: true,
     showLine: true,
-    showGridlines: true,
-    showNumbers: true,
     drawDerivative: false,
     points: [],
     values: []
@@ -363,8 +366,8 @@ function drawAxes(gridlines, numbers) {
 }
 
 function updateInformation() {
-    options.values = simpleSolveMatrix(simpleGaussElim(functionMatrix(options.points)));
-    $(document).trigger("updateInformation", [options.points, options.values]);
+    lcOptions.values = simpleSolveMatrix(simpleGaussElim(functionMatrix(lcOptions.points)));
+    $(document).trigger("updateInformation", [lcOptions.points, lcOptions.values]);
     update();
 }
 
@@ -375,14 +378,14 @@ function update() {
     canvas.style.height = window.innerHeight + "px";
     c.clearRect(0, 0, canvas.width, canvas.height);
     drawAxes(options.showGridlines, options.showNumbers);
-    if (options.drawDerivative) {
-        drawDerivative(options.values);
+    if (lcOptions.drawDerivative) {
+        drawDerivative(lcOptions.values);
     }
-    if (options.showLine && options.points.length != 0) {
-        drawGeoFunction(options.values);
+    if (lcOptions.showLine && lcOptions.points.length != 0) {
+        drawGeoFunction(lcOptions.values);
     }
-    if (options.showPoints) {
-        drawPoints(options.points);
+    if (lcOptions.showPoints) {
+        drawPoints(lcOptions.points);
     }
 }
 

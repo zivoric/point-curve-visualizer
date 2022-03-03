@@ -16,16 +16,18 @@
     <div id="point-list">
     </div>
     <div id="options">
+      <button name="add">+</button>
       <div id="preferences">
         <span><input type="checkbox" id="points" name="points" checked><label for="points">Show Points</label></span>
         <span><input type="checkbox" id="line" name="line" checked><label for="line">Show Line</label></span>
-        <span><input type="checkbox" id="derivative" name="derivative"><label for="derivative">Draw Derivative</label></span></div>
-      <button name="add">+</button>
+        <span><input type="checkbox" id="derivative" name="derivative"><label for="derivative">Draw Derivative</label></span>
+        <span><input type="checkbox" id="equationToggle" name="equationToggle" checked><label for="equationToggle">Show Equation</label></span>
+      </div>
     </div>
-  </div>
-  <div id="equation">
-    <div>f(x)</div>
-    <div>none</div>
+    <div id="equation">
+      <div>f(x)</div>
+      <div>none</div>
+    </div>
   </div>
   <canvas id="graph"></canvas>
   <script type="text/javascript" src="control.js"></script>

@@ -5,23 +5,22 @@ body {
     overflow: hidden;
 }
 #control-panel, #equation {
-    position: absolute;
     background-color: rgba(180, 180, 180, 0.411);
     border: 1px solid rgba(150, 150, 150, 0.411);
 }
 
 #control-panel {
+    position: absolute;
     padding: 12px;
     top: 0;
-    right: 0;
+    left: 0;
 }
-#control-panel *, #equation * {
+#control-panel * {
     user-select: none;
 }
 #equation {
+    margin-top: 12px;
     font-size: 20px;
-    bottom: 0;
-    right: 0;
     display: flex;
     max-height: 200px;
     max-width: 400px;
@@ -72,7 +71,7 @@ body {
 
 .point-element, #options {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
 .point-element {
@@ -104,6 +103,10 @@ body {
     height: 19px;
     min-width: 40px;
     max-width: 200px;
+}
+
+button[name="add"], button[name="remove"] {
+    margin-right: 6px;
 }
 
 button:hover {
