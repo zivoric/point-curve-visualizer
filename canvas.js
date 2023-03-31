@@ -224,7 +224,7 @@ function drawGeoFunction(values) {
 
 function drawDerivative(values) {
     let dx = 1;
-    let x = (Math.floor(cornerX)-cornerX)*scale - dx;
+    let x = -dx;
     let y = getYCoord(geoValue(getXPoint(x), values));
     c.beginPath();
     c.lineWidth = 3*ratio;
