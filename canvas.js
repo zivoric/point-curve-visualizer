@@ -207,11 +207,13 @@ function drawGeoFunctionOld(values) {
 
 function drawGeoFunction(values) {
     let dx = 1;
-    let x = (Math.floor(cornerX)-cornerX)*scale - dx;
+    let x = -dx;
     c.beginPath();
     c.lineWidth = 3*ratio;
     c.moveTo(x, getYCoord(geoValue(getXPoint(x), values)));
+    let i = 0;
     while (x < canvas.width) {
+        i++;
         x += dx;
         c.lineTo(x, getYCoord(geoValue(getXPoint(x), values)));
     }
