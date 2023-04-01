@@ -233,7 +233,7 @@ function drawDerivative(values) {
         x += dx;
         let oldY = y;
         y = getYCoord(geoValue(getXPoint(x), values));
-        let dy = y - oldY;
+        let dy = oldY  - y;
         c.lineTo(x, getYCoord(dy/dx));
     }
     c.strokeStyle = "rgb(201, 123, 123)";
